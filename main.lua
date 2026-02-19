@@ -273,14 +273,14 @@ if not requestsDisabled then
 	end
 end
 
-local promptUser = 2
+local promptUser = 0
 
-if promptUser == 1 and prompt and type(prompt.create) == "function" then
+if promptUser == 0 and prompt and type(prompt.create) == "function" then
 	prompt.create(
-		'Be cautious when running scripts',
-	    [[Please be careful when running scripts from unknown developers. This script has already been ran.
+		'Welcome!',
+	    [[Welcome to Nebula Scripts!.
 
-<font transparency='0.3'>Some scripts may steal your items or in-game goods.</font>]],
+<font transparency='0.3'>This is the best free universal script!.</font>]],
 		'Okay',
 		'',
 		function()
@@ -1654,7 +1654,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Nebula Interface Suite"
 
 	if Settings.LoadingTitle ~= "Rayfield Modded - Nebula" then
-		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextTransparency = 0; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200, 0, 255); LoadingFrame.Version.TextStrokeTransparency = 0; LoadingFrame.Version.TextStrokeColor3 = Color3.fromRGB(120, 0, 255); local glow = Instance.new("UIStroke"); glow.Thickness = 2; glow.Color = Color3.fromRGB(180, 0, 255); glow.Parent = LoadingFrame.Version
+		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200,0,255); LoadingFrame.Version.TextStrokeColor3 = Color3.fromRGB(120,0,255); LoadingFrame.Version.TextStrokeTransparency = 0.5; LoadingFrame.Version.TextTransparency = 0
 	end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
