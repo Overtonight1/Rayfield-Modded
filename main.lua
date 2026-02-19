@@ -276,17 +276,21 @@ end
 local promptUser = 0
 
 if promptUser == 0 and prompt and type(prompt.create) == "function" then
-	prompt.create(
-		'Welcome!',
-	    [[Welcome to Nebula Scripts!.
+    local finished = Instance.new("BindableEvent") 
+
+    prompt.create(
+        'Welcome!',
+        [[Welcome to Nebula Scripts!.
 
 <font transparency='0.3'>This is the best free universal script!.</font>]],
-		'Okay',
-		'',
-		function()
+        'Okay!',
+        '',
+        function()
+            finished:Fire() 
+        end
+    )
 
-		end
-	)
+    finished.Event:Wait() 
 end
 
 if debugX then
