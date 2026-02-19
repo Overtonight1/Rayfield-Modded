@@ -1654,7 +1654,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Nebula Interface Suite"
 
 	if Settings.LoadingTitle ~= "Rayfield Modded - Nebula" then
-		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200, 0, 255)
+		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextTransparency = 0; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200, 0, 255); LoadingFrame.Version.TextStrokeTransparency = 0; LoadingFrame.Version.TextStrokeColor3 = Color3.fromRGB(120, 0, 255); local glow = Instance.new("UIStroke"); glow.Thickness = 2; glow.Color = Color3.fromRGB(180, 0, 255); glow.Parent = LoadingFrame.Version
 	end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
