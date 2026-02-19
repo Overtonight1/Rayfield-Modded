@@ -1654,7 +1654,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Nebula Interface Suite"
 
 	if Settings.LoadingTitle ~= "Rayfield Modded - Nebula" then
-		LoadingFrame.Version.Text = "Nebula UI"
+		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200, 0, 255)
 	end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
