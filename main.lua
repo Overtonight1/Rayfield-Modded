@@ -263,13 +263,10 @@ if not requestsDisabled then
 	end
 end
 
-if _G.ShowPrompt == nil then
-    _G.ShowPrompt = true
-end
- 
--- prompt code
+_G.ShowPrompt = (_G.ShowPrompt == nil) and true or _G.ShowPrompt
+
 if _G.ShowPrompt and prompt and type(prompt.create) == "function" then
-    local promptFinished = Instance.new("BindableEvent")
+    local finished = Instance.new("BindableEvent")
 
     prompt.create(
         "Welcome!",
@@ -281,11 +278,11 @@ Welcome to Nebula Scripts!
         "Okay!",
         "",
         function()
-            promptFinished:Fire()
+            finished:Fire()
         end
     )
 
-    promptFinished.Event:Wait()
+    finished.Event:Wait()
 end
 
 if debugX then
