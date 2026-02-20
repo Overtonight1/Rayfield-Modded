@@ -273,7 +273,7 @@ if _G.ShowPrompt and prompt and type(prompt.create) == "function" then
         [[
 Welcome to Nebula Scripts!
 
-<font transparency='0.3'>This is the best free universal script!</font>
+<font transparency='0.3'>This is the best script!</font>
         ]],
         "Okay!",
         "",
