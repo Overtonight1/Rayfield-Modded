@@ -263,24 +263,29 @@ if not requestsDisabled then
 	end
 end
 
-local promptUser = 0
-
-if promptUser == 0 and prompt and type(prompt.create) == "function" then
-    local finished = Instance.new("BindableEvent") 
+if _G.ShowPrompt == nil then
+    _G.ShowPrompt = true
+end
+ 
+-- prompt code
+if _G.ShowPrompt and prompt and type(prompt.create) == "function" then
+    local promptFinished = Instance.new("BindableEvent")
 
     prompt.create(
-        'Welcome!',
-        [[Welcome to Nebula Scripts!.
+        "Welcome!",
+        [[
+Welcome to Nebula Scripts!
 
-<font transparency='0.3'>This is the best free universal script!.</font>]],
-        'Okay!',
-        '',
+<font transparency='0.3'>This is the best free universal script!</font>
+        ]],
+        "Okay!",
+        "",
         function()
-            finished:Fire() 
+            promptFinished:Fire()
         end
     )
 
-    finished.Event:Wait() 
+    promptFinished.Event:Wait()
 end
 
 if debugX then
