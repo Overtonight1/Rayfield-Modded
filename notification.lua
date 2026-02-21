@@ -62,7 +62,7 @@ local function Notify(title,text,duration)
 	local Close = Instance.new("TextButton")
 	Close.Size = UDim2.new(0,18,0,18)
 	Close.Position = UDim2.new(1,-24,0,10)
-	Close.Text = "✕"
+	Close.Text = "X"
 	Close.TextSize = 13
 	Close.Font = Enum.Font.GothamBold
 	Close.TextColor3 = Color3.fromRGB(180,180,190)
@@ -147,4 +147,4 @@ end
 
 getgenv().Notify = Notify
 
-Notify("Nebula","hi.",6)
+
