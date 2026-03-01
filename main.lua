@@ -68,11 +68,10 @@ local ConfigurationExtension = ".nbla"
 local settingsTable = {
     General = {
         rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Nebula Keybind'},
+        selectedTheme = {Type = 'dropdown', Value = 'Nebula', Name = 'Theme', Options = {"Default", "Nebula", "Ocean", "AmberGlow", "Light", "Amethyst", "Green", "Bloom", "DarkBlue", "Serenity", "Crimson", "Midnight", "Neon", "Sunset", "Arctic"}},
+    },
     System = {
         usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
-    }
-    Nebula = {
-        selectedTheme = {Type = 'dropdown', Value = 'Nebula', Name = 'Theme', Options = {"Default", "Nebula", "Ocean", "AmberGlow", "Light", "Amethyst", "Green", "Bloom", "DarkBlue", "Serenity", "Crimson", "Midnight", "Neon", "Sunset", "Arctic"}},    },
     }
 }
 
