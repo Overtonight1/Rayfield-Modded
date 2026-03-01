@@ -66,16 +66,14 @@ local RayfieldFolder = "Nebula"
 local ConfigurationFolder = RayfieldFolder.."/Configurations"
 local ConfigurationExtension = ".nbla"
 local settingsTable = {
-	General = {
-		-- if needs be in order just make getSetting(name)
-		rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Rayfield Keybind'},
-		-- buildwarnings
-		-- rayfieldprompts
+    General = {
+        rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Rayfield Keybind'},
 
-	},
-	System = {
-		usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
-	}
+        selectedTheme = {Type = 'dropdown', Value = 'Default', Name = 'Theme', Options = {"Default", "Ocean", "AmberGlow", "Light", "Amethyst", "Green", "Bloom", "DarkBlue", "Serenity"}},
+    },
+    System = {
+        usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
+    }
 }
 
 -- Settings that have been overridden by the developer. These will not be saved to the user's configuration file
@@ -1562,24 +1560,36 @@ local function createSettings(window)
 						updateSetting(categoryName, settingName, Value)
 					end,
 				})
-			elseif setting.Type == 'bind' then
-				setting.Element = newTab:CreateKeybind({
-					Name = setting.Name,
-					CurrentKeybind = setting.Value,
-					HoldToInteract = false,
-					Ext = true,
-					CallOnChange = true,
-					Callback = function(Value)
-						updateSetting(categoryName, settingName, Value)
-					end,
-				})
-			end
-		end
-	end
-
-	settingsCreated = true
-	loadSettings()
-	saveSettings()
+                elseif setting.Type == 'bind' then
+                setting.Element = newTab:CreateKeybind({
+                    Name = setting.Name,
+                    CurrentKeybind = setting.Value,
+                    HoldToInteract = false,
+                    Ext = true,
+                    CallOnChange = true,
+                    Callback = function(Value)
+                        updateSetting(categoryName, settingName, Value)
+                    end,
+                })
+            -- ADD THIS:
+            elseif setting.Type == 'dropdown' then
+                setting.Element = newTab:CreateDropdown({
+                    Name = setting.Name,
+                    Options = setting.Options,
+                    CurrentOption = {setting.Value},
+                    MultipleOptions = false,
+                    Ext = true,
+                    Callback = function(Value)
+                        updateSetting(categoryName, settingName, Value[1])
+                        window.ModifyTheme(Value[1])
+                    end,
+                })
+            end
+        end
+    end
+    settingsCreated = true
+    loadSettings()
+    saveSettings()
 end
 
 
