@@ -264,28 +264,18 @@ _G.ShowPrompt = (_G.ShowPrompt == nil) and true or _G.ShowPrompt
 
 if _G.ShowPrompt and prompt and type(prompt.create) == "function" then
     local finished = Instance.new("BindableEvent")
-
     prompt.create(
-        "Nebula Scripts",
+        "Welcome!",
         [[
-<font size="24"><b>✨ Welcome to Nebula Scripts</b></font>
-
-<font color="#BF5FFF" size="22"><b>Premium Access</b></font>
-
-<font transparency="0.25">
-The most powerful script experience.
-Optimized • Clean • Reliable
-</font>
-
-<font color="#BF5FFF"><b>Enjoy your session.</b></font>
+Welcome to Nebula Scripts <font color='#A970FF'><b>Premium!</b></font>
+<font transparency='0.3'>This is the best script!</font>
         ]],
-        "Continue",
+        "Okay!",
         "",
         function()
             finished:Fire()
         end
     )
-
     finished.Event:Wait()
 end
 
