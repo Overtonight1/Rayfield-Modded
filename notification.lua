@@ -23,8 +23,22 @@ local function Notify(title,text,duration)
 	duration = duration or 5
 	local imageId = "109901840979974"
 
+	local parsedText = text:gsub("\\n", "\n")
+
+	local lineCount = 1
+	for _ in parsedText:gmatch("\n") do
+		lineCount += 1
+	end
+
+	local bodyLineHeight = 18
+	local bodyTopPad = 34
+	local bottomPad = 14
+	local minHeight = 74
+	local bodyHeight = lineCount * bodyLineHeight
+	local frameHeight = math.max(minHeight, bodyTopPad + bodyHeight + bottomPad)
+
 	local Frame = Instance.new("Frame")
-	Frame.Size = UDim2.new(1,0,0,74)
+	Frame.Size = UDim2.new(1,0,0,frameHeight)
 	Frame.BackgroundColor3 = Color3.fromRGB(22,22,28)
 	Frame.BorderSizePixel = 0
 	Frame.BackgroundTransparency = 1
@@ -42,7 +56,7 @@ local function Notify(title,text,duration)
 
 	local IconHolder = Instance.new("Frame")
 	IconHolder.Size = UDim2.new(0,42,0,42)
-	IconHolder.Position = UDim2.new(0,16,0.5,-21)
+	IconHolder.Position = UDim2.new(0,16,0,16)
 	IconHolder.BackgroundColor3 = Color3.fromRGB(32,32,40)
 	IconHolder.BorderSizePixel = 0
 	IconHolder.Parent = Frame
@@ -81,11 +95,11 @@ local function Notify(title,text,duration)
 	Title.Parent = Frame
 
 	local Body = Instance.new("TextLabel")
-	Body.Size = UDim2.new(1,-120,0,18)
-	Body.Position = UDim2.new(0,74,0,34)
+	Body.Size = UDim2.new(1,-120,0,bodyHeight)
+	Body.Position = UDim2.new(0,74,0,bodyTopPad)
 	Body.BackgroundTransparency = 1
 	Body.TextWrapped = true
-	Body.Text = text
+	Body.Text = parsedText
 	Body.TextColor3 = Color3.fromRGB(170,170,180)
 	Body.Font = Enum.Font.Gotham
 	Body.TextSize = 13
@@ -146,5 +160,3 @@ local function Notify(title,text,duration)
 end
 
 getgenv().Notify = Notify
-
-
