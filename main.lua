@@ -1823,10 +1823,6 @@ local function createSettings(window)
         end
     end)
 end
-    settingsCreated = true
-    loadSettings()
-    saveSettings()
-end
 
 function RayfieldLibrary:CreateWindow(Settings)
 	if Rayfield:FindFirstChild('Loading') then
