@@ -69,6 +69,7 @@ local settingsTable = {
     General = {
         rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Nebula Keybind'},
         selectedTheme = {Type = 'dropdown', Value = 'Nebula', Name = 'Theme', Options = {"Default", "Nebula", "Ocean", "AmberGlow", "Light", "Amethyst", "Green", "Bloom", "DarkBlue", "Serenity", "Crimson", "Midnight", "Neon", "Sunset", "Arctic"}},
+        guiSize = {Type = 'slider', Value = 500, Name = 'GUI Size', Range = {300, 700}, Increment = 10},
     },
     System = {
         usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
@@ -267,7 +268,7 @@ if _G.ShowPrompt and prompt and type(prompt.create) == "function" then
     prompt.create(
         "Welcome!",
         [[
-Welcome to Nebula Scripts <font color='#A970FF'><b>Premium!</b></font>
+Welcome to Nebula Scripts <font color='#BF5FFF'><b>Premium!</b></font>
 <font transparency='0.3'>This is the best script!</font>
         ]],
         "Okay!",
@@ -1721,49 +1722,48 @@ local function updateSetting(category: string, setting: string, value: any)
 end
 
 local function createSettings(window)
-	if not (writefile and isfile and readfile and isfolder and makefolder) and not useStudio then
-		if Topbar['Settings'] then Topbar.Settings.Visible = false end
-		Topbar['Search'].Position = UDim2.new(1, -75, 0.5, 0)
-		warn('Can\'t create settings as no file-saving functionality is available.')
-		return
-	end
+    if not (writefile and isfile and readfile and isfolder and makefolder) and not useStudio then
+        if Topbar['Settings'] then Topbar.Settings.Visible = false end
+        Topbar['Search'].Position = UDim2.new(1, -75, 0.5, 0)
+        warn('Can\'t create settings as no file-saving functionality is available.')
+        return
+    end
 
-	local newTab = window:CreateTab('Rayfield Settings', 0, true)
+    local newTab = window:CreateTab('Rayfield Settings', 0, true)
 
-	if TabList['Rayfield Settings'] then
-		TabList['Rayfield Settings'].LayoutOrder = 1000
-	end
+    if TabList['Rayfield Settings'] then
+        TabList['Rayfield Settings'].LayoutOrder = 1000
+    end
 
-	if Elements['Rayfield Settings'] then
-		Elements['Rayfield Settings'].LayoutOrder = 1000
-	end
+    if Elements['Rayfield Settings'] then
+        Elements['Rayfield Settings'].LayoutOrder = 1000
+    end
 
-	-- Create sections and elements
-	for categoryName, settingCategory in pairs(settingsTable) do
-		newTab:CreateSection(categoryName)
+    for categoryName, settingCategory in pairs(settingsTable) do
+        newTab:CreateSection(categoryName)
 
-		for settingName, setting in pairs(settingCategory) do
-			if setting.Type == 'input' then
-				setting.Element = newTab:CreateInput({
-					Name = setting.Name,
-					CurrentValue = setting.Value,
-					PlaceholderText = setting.Placeholder,
-					Ext = true,
-					RemoveTextAfterFocusLost = setting.ClearOnFocus,
-					Callback = function(Value)
-						updateSetting(categoryName, settingName, Value)
-					end,
-				})
-			elseif setting.Type == 'toggle' then
-				setting.Element = newTab:CreateToggle({
-					Name = setting.Name,
-					CurrentValue = setting.Value,
-					Ext = true,
-					Callback = function(Value)
-						updateSetting(categoryName, settingName, Value)
-					end,
-				})
-                elseif setting.Type == 'bind' then
+        for settingName, setting in pairs(settingCategory) do
+            if setting.Type == 'input' then
+                setting.Element = newTab:CreateInput({
+                    Name = setting.Name,
+                    CurrentValue = setting.Value,
+                    PlaceholderText = setting.Placeholder,
+                    Ext = true,
+                    RemoveTextAfterFocusLost = setting.ClearOnFocus,
+                    Callback = function(Value)
+                        updateSetting(categoryName, settingName, Value)
+                    end,
+                })
+            elseif setting.Type == 'toggle' then
+                setting.Element = newTab:CreateToggle({
+                    Name = setting.Name,
+                    CurrentValue = setting.Value,
+                    Ext = true,
+                    Callback = function(Value)
+                        updateSetting(categoryName, settingName, Value)
+                    end,
+                })
+            elseif setting.Type == 'bind' then
                 setting.Element = newTab:CreateKeybind({
                     Name = setting.Name,
                     CurrentKeybind = setting.Value,
@@ -1774,7 +1774,6 @@ local function createSettings(window)
                         updateSetting(categoryName, settingName, Value)
                     end,
                 })
-            -- ADD THIS:
             elseif setting.Type == 'dropdown' then
                 setting.Element = newTab:CreateDropdown({
                     Name = setting.Name,
@@ -1787,15 +1786,47 @@ local function createSettings(window)
                         window.ModifyTheme(Value[1])
                     end,
                 })
+            elseif setting.Type == 'slider' then
+                setting.Element = newTab:CreateSlider({
+                    Name = setting.Name,
+                    Range = setting.Range,
+                    Increment = setting.Increment,
+                    CurrentValue = setting.Value,
+                    Ext = true,
+                    Callback = function(Value)
+                        updateSetting(categoryName, settingName, Value)
+                        local scale = Value / 500
+                        local currentHeight = useMobileSizing and 275 or 475
+                        TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {
+                            Size = UDim2.new(0, Value, 0, math.floor(currentHeight * scale))
+                        }):Play()
+                        TweenService:Create(Main.Topbar, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {
+                            Size = UDim2.new(0, Value, 0, 45)
+                        }):Play()
+                    end,
+                })
             end
         end
     end
+
+    settingsCreated = true
+    loadSettings()
+    saveSettings()
+
+    task.defer(function()
+        local savedSize = getSetting("General", "guiSize")
+        if savedSize and savedSize ~= 500 then
+            local scale = savedSize / 500
+            local currentHeight = useMobileSizing and 275 or 475
+            Main.Size = UDim2.new(0, savedSize, 0, math.floor(currentHeight * scale))
+            Main.Topbar.Size = UDim2.new(0, savedSize, 0, 45)
+        end
+    end)
+end
     settingsCreated = true
     loadSettings()
     saveSettings()
 end
-
-
 
 function RayfieldLibrary:CreateWindow(Settings)
 	if Rayfield:FindFirstChild('Loading') then
