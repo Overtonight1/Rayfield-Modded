@@ -1890,30 +1890,36 @@ function RayfieldLibrary:CreateWindow(Settings)
 		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200,0,255); LoadingFrame.Version.TextStrokeColor3 = Color3.fromRGB(120,0,255); LoadingFrame.Version.TextStrokeTransparency = 0.5; LoadingFrame.Version.TextTransparency = 0
 	end
 
-	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
-		Topbar.Icon.Visible = true
-		Topbar.Title.Position = UDim2.new(0, 47, 0.5, 0)
+if Topbar:FindFirstChild('Icon') then
+	Topbar.Icon.Visible = true
+	Topbar.Title.Position = UDim2.new(0, 47, 0.5, 0)
+	Topbar.Icon.Image = "rbxassetid://109901840979974"
+	Topbar.Icon.ImageRectOffset = Vector2.new(0, 0)
+	Topbar.Icon.ImageRectSize = Vector2.new(0, 0)
 
-		if Settings.Icon then
-			if typeof(Settings.Icon) == 'string' and Icons then
-				local asset = getIcon(Settings.Icon)
+	Topbar.Icon.ImageTransparency = 1
+	Topbar.Icon.Size = UDim2.new(0, 20, 0, 20)
 
-				Topbar.Icon.Image = 'rbxassetid://'..asset.id
-				Topbar.Icon.ImageRectOffset = asset.imageRectOffset
-				Topbar.Icon.ImageRectSize = asset.imageRectSize
-			else
-				Topbar.Icon.Image = getAssetUri(Settings.Icon)
-			end
-		else
-			Topbar.Icon.Image = "rbxassetid://" .. 0
+	task.spawn(function()
+		task.wait(1.5)
+		TweenService:Create(Topbar.Icon, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {ImageTransparency = 0, Size = UDim2.new(0, 28, 0, 28)}):Play()
+		task.wait(0.6)
+		TweenService:Create(Topbar.Icon, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 24, 0, 24)}):Play()
+
+		while true do
+			task.wait(3)
+			TweenService:Create(Topbar.Icon, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 28, 0, 28)}):Play()
+			task.wait(0.3)
+			TweenService:Create(Topbar.Icon, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 24, 0, 24)}):Play()
 		end
-	end
+	end)
+end
 
-	if dragBar then
-		dragBar.Visible = false
-		dragBarCosmetic.BackgroundTransparency = 1
-		dragBar.Visible = true
-	end
+if dragBar then
+	dragBar.Visible = false
+	dragBarCosmetic.BackgroundTransparency = 1
+	dragBar.Visible = true
+end
 
 	if Settings.Theme then
 		local success, result = pcall(ChangeTheme, Settings.Theme)
