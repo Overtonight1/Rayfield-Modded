@@ -2412,9 +2412,13 @@ if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 				TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 0.9}):Play()
 			end)
 
-			function ButtonValue:Set(NewButton)
+            function ButtonValue:Set(NewButton)
 				Button.Title.Text = NewButton
 				Button.Name = NewButton
+			end
+
+			function ButtonValue:Destroy()
+				Button:Destroy()
 			end
 
 			return ButtonValue
@@ -3747,6 +3751,16 @@ if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 				TabButton.Title.TextColor3 = SelectedTheme.TabTextColor
 			end
 		end)
+
+        function Tab:ClearButtons(prefix)
+            for _, element in ipairs(TabPage:GetChildren()) do
+                if element.ClassName == "Frame" and element.Name ~= "Placeholder" and element.Name ~= "SectionSpacing" and element.Name ~= "Divider" and element.Name ~= "SectionTitle" then
+                    if not prefix or string.sub(element.Name, 1, #prefix) == prefix then
+                        element:Destroy()
+                    end
+                end
+            end
+        end
 
 		return Tab
 	end
