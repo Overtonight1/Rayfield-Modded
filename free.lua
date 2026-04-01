@@ -2369,6 +2369,8 @@ if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 			TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 			TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
 
+            Button.ElementIndicator.TextTransparency = 1
+
 
 			Button.Interact.MouseButton1Click:Connect(function()
 				local Success, Response = pcall(ButtonSettings.Callback)
@@ -2421,38 +2423,78 @@ if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 				Button:Destroy()
 			end
 
-            if ButtonSettings.OnDelete then
-				local deleteBtn = Instance.new("ImageButton")
-				deleteBtn.Name = "DeleteBtn"
-				deleteBtn.Size = UDim2.new(0, 20, 0, 20)
-				deleteBtn.AnchorPoint = Vector2.new(1, 0.5)
-				deleteBtn.Position = UDim2.new(1, -10, 0.5, 0)
-				deleteBtn.BackgroundTransparency = 1
-				deleteBtn.ZIndex = 10
-				deleteBtn.Parent = Button
+Button.ElementIndicator.Visible = false
 
-				if Icons then
-					local asset = getIcon("trash-2")
-					deleteBtn.Image = "rbxassetid://" .. asset.id
-					deleteBtn.ImageRectOffset = asset.imageRectOffset
-					deleteBtn.ImageRectSize = asset.imageRectSize
+			if ButtonSettings.OnDelete or ButtonSettings.OnFavourite then
+				if ButtonSettings.OnDelete then
+					local deleteBtn = Instance.new("ImageButton")
+					deleteBtn.Name = "DeleteBtn"
+					deleteBtn.Size = UDim2.new(0, 20, 0, 20)
+					deleteBtn.AnchorPoint = Vector2.new(1, 0.5)
+					deleteBtn.Position = UDim2.new(1, -10, 0.5, 0)
+					deleteBtn.BackgroundTransparency = 1
+					deleteBtn.ZIndex = 10
+					deleteBtn.Parent = Button
+
+					if Icons then
+						local asset = getIcon("trash-2")
+						deleteBtn.Image = "rbxassetid://" .. asset.id
+						deleteBtn.ImageRectOffset = asset.imageRectOffset
+						deleteBtn.ImageRectSize = asset.imageRectSize
+					end
+
+					deleteBtn.ImageColor3 = SelectedTheme.TextColor
+					deleteBtn.ImageTransparency = 0.5
+
+					deleteBtn.MouseEnter:Connect(function()
+						TweenService:Create(deleteBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0, ImageColor3 = Color3.fromRGB(255, 80, 80)}):Play()
+					end)
+					deleteBtn.MouseLeave:Connect(function()
+						TweenService:Create(deleteBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5, ImageColor3 = SelectedTheme.TextColor}):Play()
+					end)
+					deleteBtn.MouseButton1Click:Connect(function()
+						pcall(ButtonSettings.OnDelete)
+						Button:Destroy()
+					end)
 				end
 
-				deleteBtn.ImageColor3 = SelectedTheme.TextColor
-				deleteBtn.ImageTransparency = 0.5
+				if ButtonSettings.OnFavourite then
+					local isFav = ButtonSettings.IsFavourite or false
 
-				deleteBtn.MouseEnter:Connect(function()
-					TweenService:Create(deleteBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0, ImageColor3 = Color3.fromRGB(255, 80, 80)}):Play()
-				end)
+					local favBtn = Instance.new("ImageButton")
+					favBtn.Name = "FavBtn"
+					favBtn.Size = UDim2.new(0, 20, 0, 20)
+					favBtn.AnchorPoint = Vector2.new(1, 0.5)
+					favBtn.Position = UDim2.new(1, -38, 0.5, 0)
+					favBtn.BackgroundTransparency = 1
+					favBtn.ZIndex = 10
+					favBtn.Parent = Button
 
-				deleteBtn.MouseLeave:Connect(function()
-					TweenService:Create(deleteBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5, ImageColor3 = SelectedTheme.TextColor}):Play()
-				end)
+					if Icons then
+						local asset = getIcon("star")
+						favBtn.Image = "rbxassetid://" .. asset.id
+						favBtn.ImageRectOffset = asset.imageRectOffset
+						favBtn.ImageRectSize = asset.imageRectSize
+					end
 
-				deleteBtn.MouseButton1Click:Connect(function()
-					pcall(ButtonSettings.OnDelete)
-					Button:Destroy()
-				end)
+					favBtn.ImageColor3 = isFav and Color3.fromRGB(255, 200, 0) or SelectedTheme.TextColor
+					favBtn.ImageTransparency = isFav and 0 or 0.5
+
+					favBtn.MouseEnter:Connect(function()
+						TweenService:Create(favBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0, ImageColor3 = Color3.fromRGB(255, 200, 0)}):Play()
+					end)
+					favBtn.MouseLeave:Connect(function()
+						if not isFav then
+							TweenService:Create(favBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5, ImageColor3 = SelectedTheme.TextColor}):Play()
+						end
+					end)
+					favBtn.MouseButton1Click:Connect(function()
+						isFav = not isFav
+						favBtn.ImageColor3 = isFav and Color3.fromRGB(255, 200, 0) or SelectedTheme.TextColor
+						favBtn.ImageTransparency = isFav and 0 or 0.5
+						pcall(ButtonSettings.OnFavourite, isFav)
+					end)
+				end
 			end
 
 			return ButtonValue
