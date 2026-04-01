@@ -274,6 +274,11 @@ Welcome to Nebula Scripts <font color='#BF5FFF'><b>Premium!</b></font>
         "Okay!",
         "",
         function()
+            local sound = Instance.new("Sound")
+            sound.SoundId = "rbxassetid://135244211779631"
+            sound.Parent = game:GetService("SoundService")
+            sound:Play()
+            game:GetService("Debris"):AddItem(sound, 10)
             finished:Fire()
         end
     )
