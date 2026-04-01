@@ -2421,6 +2421,40 @@ if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 				Button:Destroy()
 			end
 
+            if ButtonSettings.OnDelete then
+				local deleteBtn = Instance.new("ImageButton")
+				deleteBtn.Name = "DeleteBtn"
+				deleteBtn.Size = UDim2.new(0, 20, 0, 20)
+				deleteBtn.AnchorPoint = Vector2.new(1, 0.5)
+				deleteBtn.Position = UDim2.new(1, -10, 0.5, 0)
+				deleteBtn.BackgroundTransparency = 1
+				deleteBtn.ZIndex = 10
+				deleteBtn.Parent = Button
+
+				if Icons then
+					local asset = getIcon("trash-2")
+					deleteBtn.Image = "rbxassetid://" .. asset.id
+					deleteBtn.ImageRectOffset = asset.imageRectOffset
+					deleteBtn.ImageRectSize = asset.imageRectSize
+				end
+
+				deleteBtn.ImageColor3 = SelectedTheme.TextColor
+				deleteBtn.ImageTransparency = 0.5
+
+				deleteBtn.MouseEnter:Connect(function()
+					TweenService:Create(deleteBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0, ImageColor3 = Color3.fromRGB(255, 80, 80)}):Play()
+				end)
+
+				deleteBtn.MouseLeave:Connect(function()
+					TweenService:Create(deleteBtn, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5, ImageColor3 = SelectedTheme.TextColor}):Play()
+				end)
+
+				deleteBtn.MouseButton1Click:Connect(function()
+					pcall(ButtonSettings.OnDelete)
+					Button:Destroy()
+				end)
+			end
+
 			return ButtonValue
 		end
 
