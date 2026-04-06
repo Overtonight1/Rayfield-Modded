@@ -4,8 +4,6 @@ if debugX then
 	warn('Initialising Rayfield')
 end
 
-
-
 local function getService(name)
 	local service = game:GetService(name)
 	return if cloneref then cloneref(service) else service
@@ -279,20 +277,28 @@ if not requestsDisabled and not useStudio then
 	end
 end
 
-local promptUser = 2
+_G.ShowPrompt = (_G.ShowPrompt == nil) and true or _G.ShowPrompt
 
-if promptUser == 1 and prompt and type(prompt.create) == "function" then
-	prompt.create(
-		'Be cautious when running scripts',
-	    [[Please be careful when running scripts from unknown developers. This script has already been ran.
-
-<font transparency='0.3'>Some scripts may steal your items or in-game goods.</font>]],
-		'Okay',
-		'',
-		function()
-
-		end
-	)
+if _G.ShowPrompt and prompt and type(prompt.create) == "function" then
+    local finished = Instance.new("BindableEvent")
+    prompt.create(
+        "Welcome!",
+        [[
+Welcome to Nebula Scripts <font color='#87CEFA'><b>Free!</b></font>
+<font transparency='0.3'>This is the best script!</font>
+        ]],
+        "Okay!",
+        "",
+        function()
+            local sound = Instance.new("Sound")
+            sound.SoundId = "rbxassetid://135244211779631"
+            sound.Parent = game:GetService("SoundService")
+            sound:Play()
+            game:GetService("Debris"):AddItem(sound, 10)
+            finished:Fire()
+        end
+    )
+    finished.Event:Wait()
 end
 
 if debugX then
@@ -1055,7 +1061,7 @@ do
 	Rayfield.Notifications.Template.Shadow.Image = customAssets[tostring(3523728077)]
 	Rayfield.Loading.Banner.Image = customAssets[tostring(111263549366178)]
 
-end -- custom asset block
+end 
 
 local minSize = Vector2.new(1024, 768)
 local useMobileSizing
@@ -1959,8 +1965,9 @@ function RayfieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Title.Text = Settings.LoadingTitle or "Rayfield"
 	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Interface Suite"
 
-	if Settings.LoadingTitle ~= "Rayfield Interface Suite" then
-		LoadingFrame.Version.Text = "Rayfield UI"
+	if Settings.LoadingTitle ~= "Nebula Interface Suite" then
+		LoadingFrame.Version.Text = "Nebula "..(Rayfield:FindFirstChild('Build') and Rayfield.Build.Value or "Unknown Build")
+		LoadingFrame.Version.TextTransparency = 0.4
 	end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
