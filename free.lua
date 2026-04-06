@@ -1962,12 +1962,11 @@ function RayfieldLibrary:CreateWindow(Settings)
 	end
 
 	LoadingFrame.Version.TextTransparency = 1
-	LoadingFrame.Title.Text = Settings.LoadingTitle or "Rayfield"
-	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Interface Suite"
+	LoadingFrame.Title.Text = Settings.LoadingTitle or "Nebula"
+	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Nebula Interface Suite"
 
-	if Settings.LoadingTitle ~= "Nebula Interface Suite" then
-		LoadingFrame.Version.Text = "Nebula "..(Rayfield:FindFirstChild('Build') and Rayfield.Build.Value or "Unknown Build")
-		LoadingFrame.Version.TextTransparency = 0.4
+	if Settings.LoadingTitle ~= "Rayfield Modded - Nebula" then
+		LoadingFrame.Version.Text = "Nebula UI"; LoadingFrame.Version.TextColor3 = Color3.fromRGB(200,0,255); LoadingFrame.Version.TextStrokeColor3 = Color3.fromRGB(120,0,255); LoadingFrame.Version.TextStrokeTransparency = 0.5; LoadingFrame.Version.TextTransparency = 0
 	end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
