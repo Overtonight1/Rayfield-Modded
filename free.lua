@@ -14,6 +14,8 @@ local UserInputService = getService("UserInputService")
 local TweenService = getService("TweenService")
 local Players = getService("Players")
 local CoreGui = getService("CoreGui")
+local loadedPlugins = {}
+local PLUGIN_TAB_LIMIT = 3
 
 -- Loads and executes a function hosted on a remote URL. Cancels the request if the requested URL takes too long to respond.
 -- Errors with the function are caught and logged to the output
@@ -4418,5 +4420,125 @@ task.delay(4, function()
 		Main.Notice.Visible = false
 	end
 end)
+
+local loadedPlugins = {}
+local PLUGIN_TAB_LIMIT = 3
+
+local function buildSandboxAPI(window, pluginName)
+    local tabCount = 0
+    local sandboxAPI = {}
+
+    function sandboxAPI:AddTab(name)
+        if tabCount >= PLUGIN_TAB_LIMIT then
+            warn("Nebula Plugin | '"..pluginName.."' exceeded tab limit of "..PLUGIN_TAB_LIMIT)
+            return nil
+        end
+        tabCount += 1
+        local realTab = window:CreateTab("["..pluginName.."] "..name, 0)
+        local sandboxTab = {}
+
+        function sandboxTab:AddButton(name, callback)
+            realTab:CreateButton({ Name = name, Callback = callback or function() end })
+        end
+        function sandboxTab:AddToggle(name, default, callback)
+            realTab:CreateToggle({ Name = name, CurrentValue = default or false, Callback = callback or function() end })
+        end
+        function sandboxTab:AddSlider(name, min, max, default, callback)
+            realTab:CreateSlider({ Name = name, Range = {min, max}, Increment = 1, CurrentValue = default or min, Callback = callback or function() end })
+        end
+
+        return sandboxTab
+    end
+
+    return sandboxAPI
+end
+
+local function loadPlugin(url, window, pluginsTab)
+    url = url:gsub("%s+", "")
+    if url == "" then return end
+
+    for _, p in ipairs(loadedPlugins) do
+        if p.url == url then
+            RayfieldLibrary:Notify({ Title = "Plugins", Content = "That plugin is already loaded.", Duration = 4 })
+            return
+        end
+    end
+
+    local ok, result = pcall(function()
+        local src = game:HttpGet(url)
+        if not src or #src == 0 then error("Empty response") end
+        local fn = loadstring(src)
+        if not fn then error("Failed to loadstring") end
+        return fn()
+    end)
+
+    if not ok or type(result) ~= "table" or type(result.Name) ~= "string" or type(result.Init) ~= "function" then
+        RayfieldLibrary:Notify({ Title = "Plugin Error", Content = "Failed to load plugin. Make sure it returns {Name, Init}.\n"..tostring(result), Duration = 6 })
+        return
+    end
+
+    local sandbox = buildSandboxAPI(window, result.Name)
+    local initOk, initErr = pcall(result.Init, sandbox)
+
+    if not initOk then
+        RayfieldLibrary:Notify({ Title = "Plugin Error", Content = result.Name.." crashed on init: "..tostring(initErr), Duration = 6 })
+        return
+    end
+
+    table.insert(loadedPlugins, { name = result.Name, url = url })
+
+    pluginsTab:CreateLabel(result.Name .. " ✓")
+
+    pluginsTab:CreateButton({
+        Name = "Remove: "..result.Name,
+        Callback = function()
+            for i, p in ipairs(loadedPlugins) do
+                if p.name == result.Name then
+                    table.remove(loadedPlugins, i)
+                    break
+                end
+            end
+            for _, tabBtn in ipairs(TabList:GetChildren()) do
+                if tabBtn.ClassName == "Frame" and tabBtn.Name:find("^%["..result.Name.."%]") then
+                    tabBtn:Destroy()
+                end
+            end
+            for _, tabPage in ipairs(Elements:GetChildren()) do
+                if tabPage.ClassName == "ScrollingFrame" and tabPage.Name:find("^%["..result.Name.."%]") then
+                    tabPage:Destroy()
+                end
+            end
+            RayfieldLibrary:Notify({ Title = "Plugins", Content = result.Name.." removed. Rejoin to fully clean up.", Duration = 5 })
+        end
+    })
+
+    RayfieldLibrary:Notify({ Title = "Plugin Loaded", Content = result.Name.." loaded successfully.", Duration = 4 })
+end
+
+local function createPluginUI(window)
+    local pluginsTab = window:CreateTab("Plugins", 0)
+
+    pluginsTab:CreateSection("Load Plugin")
+    local urlInput = pluginsTab:CreateInput({
+        Name = "Plugin URL",
+        PlaceholderText = "https://pastebin.com/raw/...",
+        CurrentValue = "",
+        RemoveTextAfterFocusLost = false,
+        Callback = function() end
+    })
+    pluginsTab:CreateButton({
+        Name = "Load Plugin",
+        Callback = function()
+            loadPlugin(urlInput.CurrentValue, window, pluginsTab)
+        end
+    })
+
+    pluginsTab:CreateDivider()
+    pluginsTab:CreateSection("Plugins Enabled")
+    pluginsTab:CreateDivider()
+    pluginsTab:CreateSection("Remove Plugins")
+
+    return pluginsTab
+end
 
 return RayfieldLibrary
