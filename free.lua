@@ -4464,8 +4464,8 @@ local function loadPlugin(url, window, pluginsTab)
     local ok, result = pcall(function()
         local src = game:HttpGet(url)
         if not src or #src == 0 then error("Empty response") end
-        local fn = loadstring(src)
-        if not fn then error("Failed to loadstring") end
+        local fn, fnErr = loadstring(src)
+        if not fn then error("loadstring failed: "..tostring(fnErr)) end
         return fn()
     end)
 
